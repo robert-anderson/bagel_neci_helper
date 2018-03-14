@@ -1,10 +1,10 @@
 #!/bin/bash
 
-bagel_exe='/home/mmm0043/Programs/bagel_master/obj/src/BAGEL'
-neci_exe='/home/mmm0043/Programs/neci_hbrdm/build_debug/bin/kneci'
+# example calculation
 
-nclosed=2
-nact=4
+trel=true
+nclosed=1
+nact=7
 
 read -r -d '' mol_chunk << EOM
         {
@@ -24,6 +24,10 @@ read -r -d '' mol_chunk << EOM
             "title": "molecule"
         },
 EOM
+
+# if this is true, we save the archive file and optionally accept the iteration if the
+# rdm is considered good enough
+multi_attempt=false
 
 # is this a production or test mode calculation?
 production_run=false

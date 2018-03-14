@@ -2,18 +2,21 @@
 
 root_dir=$(pwd)/$(dirname $0)
 
-if [ -e ./bagel_neci_config.sh ]; then
-    source ./bagel_neci_config.sh
-else
-    echo ERROR: bagel_neci_config.sh file missing
-    exit 1
-fi
+source ./utils.sh
+
+check_source ./env_config.sh
+check_source ./calc_config.sh
+check_source ./chunks.sh
 
 if [ -d ./neci_iter_1 ]; then
-    echo ERROR: neci_iters exist, please clean directory before initialising CASSCF calc
-    exit 1
+    fatal_error "neci_iters exist, please clean directory before initialising CASSCF calc"
 fi
 
+if [ $trel == "true" ] ; then
+    neci_exe=$neci_bin_path/kneci
+else
+    neci_exe=$neci_bin_path/neci
+fi
 
 #########################################################
 
@@ -22,22 +25,8 @@ cat > bagel.json <<- EOM
 {
     "bagel" : [
 		$mol_chunk
-        {
-            "title" : "dhf",
-            "gaunt" : true,
-            "breit" : true,
-            "robust" : true,
-            "thresh" : 1.0e-10,
-            "maxiter" : 1000
-        },
-        {
-            "title" : "zfci",
-            "only_ints" : true,
-            "ncore" : $nclosed,
-            "norb" :  $nact,
-            "frozen" : false,
-            "state" : [1]
-        }
+		$scf_chunk
+        $initial_casscf_chunk
 	]
 }
 EOM
@@ -50,9 +39,18 @@ echo "Converged SCF energy:" $scf_energy
 nelec=$(grep -oE "NELEC= [0-9]+" FCIDUMP | grep -oE [0-9]+)
 
 mkdir neci_iter_1
-mv FCIDUMP neci_iter_1
 rm this_neci_iter 2> /dev/null
 ln -s ./neci_iter_1 ./this_neci_iter
+ln -s ../FCIDUMP this_neci_iter/FCIDUMP
+
+if [ $trel == "true" ] ; then
+    spinfree_line=""
+    excitgen_line="nonuniformrandexcits PICK-VIRT-UNIFORM"
+else
+    spinfree_line="write-spin-free-rdm"
+    excitgen_line="nonuniformrandexcits 4IND-WEIGHTED"
+fi
+
 
 if [ $production_run == "true" ] ; then
     cat > neci_iter_1/fciqmc.config <<- EOM
@@ -82,7 +80,7 @@ freeformat
 electrons $nelec
 
 sym 0 0 0 0
-nonuniformrandexcits PICK-VIRT-UNIFORM
+$excitgen_line
 nobrillouintheorem
 endsys
 
@@ -125,13 +123,10 @@ explicitallrdm
 
 calcrdmonfly 3 1000 5000
     
+$spinfree_line
 printonerdm
 print-one-rdm-occupations
 endlog
 end
 EOM
 fi
-
-
-
-

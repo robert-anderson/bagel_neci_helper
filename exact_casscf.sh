@@ -5,35 +5,43 @@ root_dir=$(pwd)/$(dirname $0)
 bagel_exe='/home/mmm0043/Programs/bagel_master/obj/src/BAGEL'
 neci_exe='/home/mmm0043/Programs/neci_hbrdm/build_debug/bin/kneci'
 
-nclosed=0
-nact=5
 
-read -r -d '' mol_chunk << EOM
-        {
-            "geometry": [
-                {
-                    "xyz": [
-                        -0.0,
-                        -0.0,
-                        -0.0
-                    ],
-                    "atom": "Li"
-                },
-                {
-                    "xyz": [
-                        1.0,
-                        -0.0,
-                        -0.0
-                    ],
-                    "atom": "Li"
-                }
-            ],
-            "df_basis": "/home/mmm0043/Programs/bagel_master/src/basis/cc-pvdz.json",
-            "basis": "/home/mmm0043/Programs/bagel_master/src/basis/cc-pvdz.json",
-            "angstrom": true,
-            "title": "molecule"
-        },
-EOM
+if [ -e ./bagel_neci_config.sh ]; then
+    source ./bagel_neci_config.sh
+else
+    echo ERROR: bagel_neci_config.sh file missing
+    exit 1
+fi
+
+#nclosed=0
+#nact=5
+
+#read -r -d '' mol_chunk << EOM
+#        {
+#            "geometry": [
+#                {
+#                    "xyz": [
+#                        -0.0,
+#                        -0.0,
+#                        -0.0
+#                    ],
+#                    "atom": "Li"
+#                },
+#                {
+#                    "xyz": [
+#                        1.0,
+#                        -0.0,
+#                        -0.0
+#                    ],
+#                    "atom": "Li"
+#                }
+#            ],
+#            "df_basis": "/home/mmm0043/Programs/bagel_master/src/basis/cc-pvdz.json",
+#            "basis": "/home/mmm0043/Programs/bagel_master/src/basis/cc-pvdz.json",
+#            "angstrom": true,
+#            "title": "molecule"
+#        },
+#EOM
 
 
 
@@ -48,14 +56,7 @@ cat > bagel.json <<- EOM
 {
     "bagel" : [
 		$mol_chunk
-        {
-            "title" : "dhf",
-            "gaunt" : true,
-            "breit" : true,
-            "robust" : true,
-            "thresh" : 1.0e-10,
-            "maxiter" : 1000
-        },
+        $scf_chunk
         {
             "nclosed": $nclosed,
             "title": "zcasscf",
