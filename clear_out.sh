@@ -22,3 +22,4 @@ rm casscf.log 2> /dev/null
 rm neci.inp 2> /dev/null
 rm bagel.json 2> /dev/null
 rm FCIDUMP 2> /dev/null
+rm FOCKMAT 2> /dev/null

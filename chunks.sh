@@ -29,6 +29,7 @@ read -r -d '' initial_casscf_chunk << EOM
         {
             "title"  : "zcasscf",
             "external_rdm" : "noref",
+            "canonical" : $tpt2,
             "gaunt" : true,
             "breit" : true,
             "state" : [1],
@@ -50,6 +51,7 @@ read -r -d '' initial_casscf_chunk << EOM
         {
             "title"  : "casscf",
             "external_rdm" : "noref",
+            "canonical" : $tpt2,
             "nstate" : [1],
             "maxiter" : 0,
             "nact" : $nact,
@@ -73,8 +75,9 @@ read -r -d '' casscf_chunk << EOM
             "title": "zcasscf",
             "nclosed": $nclosed,
             "nact": $nact,
-		    "state" : [1],
-		    "external_rdm" : "fciqmc",
+            "state" : [1],
+            "external_rdm" : "fciqmc",
+            "canonical" : $tpt2,
             "maxiter": 1
 		},
 		{
@@ -91,6 +94,7 @@ read -r -d '' casscf_chunk << EOM
         {
             "title"  : "casscf",
             "external_rdm" : "fciqmc",
+            "canonical" : $tpt2,
             "nstate" : [1],
             "maxiter" : 1,
             "nact" : $nact,
@@ -108,7 +112,46 @@ EOM
 fi
 
 
-
-
-
-
+if [ "$trel" == "true" ] ; then
+read -r -d '' dump_fockmat_chunk << EOM
+        {
+            "state": [1],
+            "nclosed": $nclosed,
+            "title": "zcasscf",
+            "maxiter_micro": 100,
+            "algorithm" : "noopt",
+            "nact": $nact,
+            "external_rdm" : "fciqmc",
+            "canonical" : $tpt2,
+            "maxiter": 1
+        },
+        {
+            "title" : "relsmith",
+            "method" : "caspt2",
+            "external_rdm" : "noref",
+            "frozen" : false
+        }
+EOM
+else
+read -r -d '' dump_fockmat_chunk << EOM
+        {
+            "nstate": [
+                1
+            ],
+            "nclosed": $nclosed,
+            "title": "casscf",
+            "maxiter_micro": 100,
+            "algorithm" : "noopt",
+            "nact": $nact,
+            "external_rdm" : "fciqmc",
+			"canonical" : $tpt2,
+            "maxiter": 1
+        },
+        {
+            "title" : "smith",
+            "method" : "caspt2",
+            "external_rdm" : "noref",
+            "frozen" : false
+        }
+EOM
+fi

@@ -15,7 +15,7 @@ else
     neci_exe=$neci_bin_path/neci
 fi
 
-MAX_ITER=10
+MAX_ITER=1
 TOL="1e-8"
 
 sh init_neci_casscf.sh
@@ -46,3 +46,9 @@ done
 if [ "$it" == "$MAX_ITER" ] ; then
     echo "Maximum iteration number reached"
 fi
+
+if [ "$tpt2" == "true" ] ; then
+	sh do_neci_caspt2.sh
+fi
+
+

@@ -2,7 +2,8 @@
 
 # example calculation
 
-trel=true
+trel=false
+tpt2=true
 nclosed=0
 nact=5
 
@@ -46,7 +47,7 @@ compute_nodes=3
 walltime=2h
 initialruntime=20m
 timepadding=10m
-name='Ne_zcasscf'
+name='Li2_zcasscf'
 spinrestrict=0
 corespacesize=250
 trialwfsize=20

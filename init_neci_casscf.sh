@@ -129,4 +129,65 @@ print-one-rdm-occupations
 endlog
 end
 EOM
+    cat > neci.highbody.inp <<- EOM
+title
+
+system read noorder
+symignoreenergies
+freeformat
+electrons $nelec
+
+sym 0 0 0 0
+$excitgen_line
+nobrillouintheorem
+endsys
+
+calc
+methods
+method vertex fcimc
+endmethods
+fci-init
+
+tau 0.01
+memoryfacpart 2.0
+memoryfacspawn 20.0
+totalwalkers 5000
+nmcyc 4000
+seed 17
+startsinglepart 100
+diagshift 0.100000
+rdmsamplingiters 200000
+shiftdamp 0.05
+truncinitiator
+addtoinitiator 3
+allrealcoeff
+realspawncutoff 0.4
+jump-shift
+proje-changeref 1.5
+stepsshift 10
+maxwalkerbloom 3
+load-balance-blocks off
+LANCZOS-ENERGY-PRECISION 10
+endcalc
+
+integral
+freeze 0 0
+endint
+
+logging
+binarypops
+exactrdm
+explicitallrdm
+
+calcrdmonfly 3 1000 5000
+
+four-body-rdm
+scnevpt2-intermediate
+    
+$spinfree_line
+printonerdm
+print-one-rdm-occupations
+endlog
+end
+EOM
 fi
