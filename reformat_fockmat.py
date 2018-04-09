@@ -13,9 +13,8 @@ with open('FOCKMAT', 'w') as f:
 			try:
 				num_val = float(val)
 			except ValueError:
-				print val
-				assert(0)
-			if j!=i and abs(float(val))>EPS:
+				num_val = complex(*map(float, val[1:-1].split(',')))
+			if j!=i and abs(num_val)>EPS:
 				print "WARNING: large off-diagonal Fock matrix elements"
 			if j>=i:
 				f.write('{}    {}    {}\n'.format(val, i, j))

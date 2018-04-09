@@ -182,7 +182,7 @@ explicitallrdm
 calcrdmonfly 3 1000 5000
 
 four-body-rdm
-scnevpt2-intermediate
+caspt2-intermediate
     
 $spinfree_line
 printonerdm
