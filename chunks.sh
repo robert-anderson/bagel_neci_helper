@@ -122,7 +122,6 @@ read -r -d '' dump_fockmat_chunk << EOM
             "algorithm" : "noopt",
             "nact": $nact,
             "external_rdm" : "fciqmc",
-            "canonical" : $tpt2,
             "maxiter": 1
         },
         {
@@ -144,13 +143,55 @@ read -r -d '' dump_fockmat_chunk << EOM
             "algorithm" : "noopt",
             "nact": $nact,
             "external_rdm" : "fciqmc",
-			"canonical" : $tpt2,
             "maxiter": 1
         },
         {
             "title" : "smith",
             "method" : "caspt2",
             "external_rdm" : "noref",
+            "frozen" : false
+        }
+EOM
+fi
+
+
+if [ "$trel" == "true" ] ; then
+read -r -d '' caspt2_chunk << EOM
+        {
+            "state": [1],
+            "nclosed": $nclosed,
+            "title": "zcasscf",
+            "maxiter_micro": 100,
+            "algorithm" : "noopt",
+            "nact": $nact,
+            "external_rdm" : "fciqmc",
+            "maxiter": 1
+        },
+        {
+            "title" : "relsmith",
+            "method" : "caspt2",
+            "external_rdm" : "fciqmc",
+            "frozen" : false
+        }
+EOM
+else
+read -r -d '' caspt2_chunk << EOM
+        {
+            "nstate": [
+                1
+            ],
+            "nclosed": $nclosed,
+            "title": "casscf",
+            "maxiter_micro": 100,
+            "algorithm" : "noopt",
+            "nact": $nact,
+            "external_rdm" : "fciqmc",
+            "maxiter": 1
+        },
+        {
+            "title" : "smith",
+            "method" : "caspt2",
+            "external_rdm" : "fciqmc",
             "frozen" : false
         }
 EOM
